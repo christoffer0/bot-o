@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Validação de Senhas</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+    }
+
+    .btn {
+      background-color: #0066cc;
+      color: white;
+      padding: 10px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: #004d99;
+    }
+
+    .resultado {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    .forte {
+      color: green;
+    }
+
+    .fraca {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Validação e Geração de Senhas</h1>
+
+  <div class="input-group">
+    <label>Digite uma senha:</label><br>
+    <input type="password" id="senha" oninput="verificarSenha()">
+  </div>
+
+  <div class="input-group">
+    <button class="btn" onclick="gerarSenha()">Gerar Senha Complexa</button>
+  </div>
+
+  <div id="infoSenha" class="resultado"></div>
+  <div id="entropiaSenha" class="resultado"></div>
+
+  <script>
+    // Classes com padrão
+    const classes = {
+      maiuscula: /[A-Z]/,
+      minuscula: /[a-z]/,
+      numero: /[0-9]/,
+      especial: /[\W_]/
+    };
+
+    // Função para medir força da senha
+    function verificarSenha() {
+      const senha = document.getElementById("senha").value;
+      let score = 0;
+      let info = [];
+
+      if (senha.length >= 8) score++;
+      if (classes.maiuscula.test(senha)) score++;
+      if (classes.minuscula.test(senha)) score++;
+      if (classes.numero.test(senha)) score++;
+      if (classes.especial.test(senha)) score++;
+
+      // Número de caracteres
+      info.push(Número de caracteres: ${senha.length});
+
+      // Senhas complexas e força
+      const forca = ["Muito fraca", "Fraca", "Média", "Boa", "Forte"];
+      const cor = score >= 4 ? "forte" : "fraca";
+      document.getElementById("infoSenha").innerHTML =
+        <span class="${cor}">Força da senha: ${forca[score]}</span><br>${info.join('<br>')};
+
+      // Entropia
+      document.getElementById("entropiaSenha").innerHTML = Entropia: ${calcularEntropia(senha).toFixed(2)} bits;
+    }
+
+    // Gerador de senha complexa
+    function gerarSenha() {
+      const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+[]";
+      let senha = "";
+      for (let i = 0; i < 12; i++) {
+        senha += charset.charAt(Math.floor(Math.random() * charset.length));
+      }
+      document.getElementById("senha").value = senha;
+      verificarSenha();
+    }
+
+    // Cálculo da entropia (aproximado)
+    function calcularEntropia(senha) {
+      let pool = 0;
+      if (classes.maiuscula.test(senha)) pool += 26;
+      if (classes.minuscula.test(senha)) pool += 26;
+      if (classes.numero.test(senha)) pool += 10;
+      if (classes.especial.test(senha)) pool += 32;
+      return senha.length * Math.log2(pool || 1);
+    }
+  </script>
+
+</body>
+</html>
